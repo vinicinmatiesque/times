@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+}
+
+h1 {
+    color: #008CBA;
+    margin-bottom: 20px;
+}
+
+form {
+    border: 1px solid #ddd;
+    padding: 10px;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding-top: 8px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #005B82;
+}
+
+h2 {
+    color: #008CBA;
+    margin-bottom: 10px;
+}
+
+ul#listaDados {
+    list-style: none;
+    padding: 0;
+}
+
+ul#listaDados li {
+    padding: 10px;
+    background-color: #f2f2f2;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+}

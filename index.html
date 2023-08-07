@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css" />
+    <title>Criar Coleção e Adicionar Dado no Firestore</title>
+
+    <style>
+        /* Estilo para diminuir o tamanho do gráfico */
+        #graficoTimes {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ... Seu código HTML existente ... -->
+</body>
+
+</html>
+
+<body>
+    <h1>Maiores torcidas do Brasil (segundo nossos usuarios)</h1>
+    <form id="meuFormulario">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="idade">Idade:</label>
+        <input type="number" id="idade" name="idade" required>
+        <label for="cidade">Cidade:</label>
+        <input type="text" id="cidade" name="cidade" required>
+        <label for="time">Time que torce:</label>
+        <input type="text" id="time" name="time" required>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <h2>Resultados por enquanto:</h2>
+    <ul id="listaDados"></ul>
+
+    <h2>Gráfico de Times:</h2>
+    <canvas id="graficoTimes"></canvas>
+
+    <!-- Adicione a biblioteca do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+    <!-- Adicione a biblioteca Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Configurar as credenciais do Firebase
+        var firebaseConfig = {
+            apiKey: "AIzaSyDCPGcc17DiegTLRlmmGgar7nAYZA42AUQ",
+             authDomain: "teste-8df8e.firebaseapp.com",
+            projectId: "teste-8df8e",
+        };
+        // Inicializar o Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Referenciar o Firestore
+        var db = firebase.firestore();
+
+        // Capturar o formulário e salvar dados no Firestore ao enviá-lo
+        document.getElementById("meuFormulario").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var nome = document.getElementById("nome").value;
+            var idade = document.getElementById("idade").value;
+            var cidade = document.getElementById("cidade").value;
+            var time = document.getElementById("time").value;
+
+            // Salvar os dados na coleção "usuarios"
+            db.collection("usuarios").add({
+                nome: nome,
+                idade: idade,
+                cidade: cidade,
+                time: time
+            })
+                .then(function (docRef) {
+                    console.log("Dados salvos com ID: ", docRef.id);
+                    alert("Dados salvos com sucesso!");
+                    // Limpar os campos do formulário após salvar os dados
+                    document.getElementById("meuFormulario").reset();
+                    // Atualizar a lista de dados exibidos na tela
+                    atualizarListaDados();
+                })
+                .catch(function (error) {
+                    console.error("Erro ao salvar dados: ", error);
+                    alert("Ocorreu um erro ao salvar os dados. Por favor, tente novamente.");
+                });
+        });
+
+        // Atualizar a lista de dados exibidos na tela
+        function atualizarListaDados() {
+            var listaDados = document.getElementById("listaDados");
+            listaDados.innerHTML = ""; // Limpar a lista atual
+
+            var times = {}; // Objeto para contar a frequência dos times
+
+            // Buscar todos os documentos da coleção "usuarios"
+            db.collection("usuarios").get()
+                .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        var dados = doc.data();
+                        var nome = dados.nome;
+                        var idade = dados.idade;
+                        var cidade = dados.cidade;
+                        var time = dados.time;
+
+                        // Criar um item de lista e adicioná-lo à lista
+                        var li = document.createElement("li");
+                        li.textContent = "Nome: " + nome + ", Idade: " + idade + ", Cidade: " + cidade + ", Time: " + time;
+                        listaDados.appendChild(li);
+
+                        // Contar a frequência dos times
+                        if (times[time]) {
+                            times[time]++;
+                        } else {
+                            times[time] = 1;
+                        }
+                    });
+
+                    // Criar o gráfico de pizza com os dados dos times
+                    criarGraficoPizza(times);
+                })
+                .catch(function (error) {
+                    console.error("Erro ao buscar dados: ", error);
+                });
+        }
+
+        // Criar o gráfico de pizza com os dados dos times
+        function criarGraficoPizza(times) {
+            var ctx = document.getElementById("graficoTimes").getContext("2d");
+
+            var labels = Object.keys(times);
+            var data = Object.values(times);
+
+            var grafico = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            data: data,
+                            backgroundColor: [
+                                "#FF5733",
+                                "#FFC300",
+                                "#36A2EB",
+                                "#4BC0C0",
+                                "#9966FF",
+                                "#FF6384",
+                                "#FF9F40",
+                                "#FFCE56",
+                            ],
+                        },
+                    ],
+                },
+                options: {
+                    legend: {
+                        display: true,
+                        position: "right",
+                    },
+                },
+            });
+        }
+
+        // Chamar a função de atualização da lista quando a página carregar
+        window.onload = function () {
+            atualizarListaDados();
+        };
+    </script>
+</body>
+
+</html>
